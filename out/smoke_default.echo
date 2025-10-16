@@ -1,0 +1,1 @@
+ECHO: "BOM_ITEM:", "SMOKE_DEFAULT", ["L", 2000, "D", 160, "t", 2, "medium", "PE_500", "top", "snapring", "open_top", false, "bottom", "platdicht", "bottom_opt", "zoom", "rings", [285.714, 571.429, 857.143, 1142.86, 1428.57, 1714.29], "ring_w", 10, "ring_t", 2, "reinforce", true, "rein_side", "boven", "rein_spans", [[100, 200]], "productzijde", "buiten"]

@@ -1,0 +1,2 @@
+product,version,bom_tag,L,D,t,medium,top,open_top,bottom,bottom_opt,rings,ring_w,ring_t,reinforce,rein_side,rein_spans,productzijde
+filterslang,1.0.0,SMOKE_DEFAULT,2000,160,2,PE_500,snapring,False,platdicht,zoom,"[285.714, 571.429, 857.143, 1142.86, 1428.57, 1714.29]",10,2,True,boven,"[[100, 200]]",buiten

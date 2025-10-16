@@ -1,0 +1,77 @@
+Hier is je roadmap herschreven in een helder en netjes geformatteerd **.txt**-formaat — klaar om op te slaan als `roadmap_prototype.txt`:
+
+---
+
+# **Roadmap tot werkend prototype**
+
+### **Fase 1 — Library “feature-complete”**
+
+*(nu t/m komende sprint)*
+
+* Schema v1.0 + validatie in `render_bom.py`
+* Parametrische geometrie (alle tops / bodems / ringen / versterking)
+* 2D export (DXF) via `projection()` + CLI `-o out/file.dxf`
+* Rooktest-matrix: default + edgecases (minimale / maximale waarden)
+* CI artefacts: upload `.jsonl` en optioneel `.dxf` / `.stl` (workflow staat al)
+
+**Acceptatiecriteria:**
+
+* `scripts/run_all.ps1` → ALL OK
+* `out/*.jsonl` ≡ `tests/golden/*.jsonl` (met `--epsilon`)
+* `out/*.dxf` bestaat en opent in CAD
+
+### **Fase 2 — “BOM-producer” & stuklijst-integratie**
+
+* BOM-CSV: kolommen normaliseren (materiaalcode, ringcount, totaaloppervlak, snijlengte, naaisteken / opties)
+* `Part-nos` tabel (`data/parts.csv`) met mapping van enums → interne artikelnummers
+* Exporter: Python-script dat `JSONL → CSV/Excel` voor inkoop / productie bundelt
+* CI-stap die CSV exporteert en als artifact bijvoegt
+
+**Acceptatiecriteria:**
+
+* Eén command produceert JSONL + CSV
+* CSV voldoet aan stuklijst-format van Ai Lampe
+
+### **Fase 3 — Configurator (MVP)**
+
+* CLI-configurator (eerst): `configs/filterslang.yaml` → genereert `.scad` + BOM via scripts
+* Web/Mini-UI (later): toggles voor opties; genereert parameters en roept pipeline aan
+* Preset-sets per medium (`PE_500`, `PPS_550`) met default dikte, min/max diameter, etc.
+
+**Acceptatiecriteria:**
+
+* Kies preset + opties → krijg DXF + BOM zonder handwerk
+
+### **Fase 4 — Kwaliteit & performance**
+
+* Meshing-controle: begrens `$fn` per doorsnede
+
+  * Snelle rooktests met lager `$fn`, productieruns met hoger `$fn`
+  * (CheatSheet voor `$fn` zie openscad.org)
+* Self-checks in SCAD: `assert()` op verboden combinaties (bv. snapring + platdicht conflict)
+* Tolerant diff per veld (optioneel per-key epsilon in `bom_diff.py`)
+* 3D-export waar nodig: `-o out/model.stl` (formaat bepaald door extensie)
+
+**Acceptatiecriteria:**
+
+* Snelle tests vs productie consistent
+* Geen verboden combinaties toegestaan
+* Exporteerbaar naar 3D-formaat waar nodig
+
+### **Fase 5 — Documentatie & developer-ervaring**
+
+* README: install, run, CI, troubleshooting
+* Cookbook: voorbeelden van configs → outputs
+* Scripts:
+
+  * `run_default.ps1`
+  * `run_edge.ps1`
+  * `run_all.ps1`
+  * `normalize_utf8_nobom.ps1` (voor golden tests)
+
+    * **PS7:** `-Encoding utf8` is zonder BOM
+    * **PS5:** gebruik .NET encoder
+
+---
+
+Wil je dat ik dit direct omzet naar een downloadbaar `.txt`-bestand voor je?

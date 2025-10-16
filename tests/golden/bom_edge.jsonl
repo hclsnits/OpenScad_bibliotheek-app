@@ -1,0 +1,1 @@
+{"product": "filterslang", "version": "1.0.0", "bom_tag": "SMOKE_EDGE", "L": 800, "D": 120, "t": 1.2, "medium": "PPS_550", "top": "gezoomd", "open_top": false, "bottom": "enkel", "bottom_opt": "gat_lusje", "rings": [200, 400, 600], "ring_w": 8, "ring_t": 1.6, "reinforce": true, "rein_side": "onder", "rein_spans": [[100, 150], [500, 650]], "productzijde": "binnen"}

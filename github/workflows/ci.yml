@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke-bom:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # --- OpenSCAD installeren ---
+      - name: Install OpenSCAD (Ubuntu)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openscad
+
+      - name: Install OpenSCAD (Windows via Chocolatey)
+        if: startsWith(matrix.os, 'windows')
+        shell: pwsh
+        run: |
+          choco install openscad -y
+          $env:Path = "C:\Program Files\OpenSCAD;$env:Path"
+          # Zorg dat openscad(.com) in PATH staat
+          Get-Command openscad, openscad.com -ErrorAction SilentlyContinue | Format-Table -AutoSize
+
+      - name: Make out folder
+        run: mkdir -p out
+
+      # -------- DEFAULT ----------
+      - name: Render DEFAULT to .echo
+        shell: pwsh
+        run: |
+          if ($env:RUNNER_OS -eq "Windows") {
+            openscad.com -o .\out\smoke_default.echo "tests\smoke_filterslang_default.scad"
+          } else {
+            openscad -o out/smoke_default.echo tests/smoke_filterslang_default.scad
+          }
+
+      - name: Extract DEFAULT BOM and compare with golden
+        shell: pwsh
+        run: |
+          if ($env:RUNNER_OS -eq "Windows") {
+            python .\scripts\render_bom.py --product filterslang --version 1.0.0 `
+              --echo .\out\smoke_default.echo --jsonl .\out\bom_default.jsonl `
+            | python .\scripts\bom_diff.py .\tests\golden\bom_default.jsonl --epsilon 0.0005
+          } else {
+            python scripts/render_bom.py --product filterslang --version 1.0.0 \
+              --echo out/smoke_default.echo --jsonl out/bom_default.jsonl \
+            | python scripts/bom_diff.py tests/golden/bom_default.jsonl --epsilon 0.0005
+          }
+
+      # -------- EDGECASE ----------
+      - name: Render EDGE to .echo
+        shell: pwsh
+        run: |
+          if ($env:RUNNER_OS -eq "Windows") {
+            openscad.com -o .\out\smoke_edge.echo "tests\smoke_filterslang_edgecases.scad"
+          } else {
+            openscad -o out/smoke_edge.echo tests/smoke_filterslang_edgecases.scad
+          }
+
+      - name: Extract EDGE BOM and compare with golden
+        shell: pwsh
+        run: |
+          if ($env:RUNNER_OS -eq "Windows") {
+            python .\scripts\render_bom.py --product filterslang --version 1.0s.0 `
+              --echo .\out\smoke_edge.echo --jsonl .\out\bom_edge.jsonl `
+            | python .\scripts\bom_diff.py .\tests\golden\bom_edge.jsonl --epsilon 0.0005
+          } else {
+            python scripts/render_bom.py --product filterslang --version 1.0.0 \
+              --echo out/smoke_edge.echo --jsonl out/bom_edge.jsonl \
+            | python scripts/bom_diff.py tests/golden/bom_edge.jsonl --epsilon 0.0005
+          }
+
+      # --- Artifacts ---
+      - name: Upload JSONL artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bom-${{ matrix.os }}
+          path: out/*.jsonl

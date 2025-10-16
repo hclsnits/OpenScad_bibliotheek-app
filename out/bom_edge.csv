@@ -1,0 +1,2 @@
+product,version,bom_tag,L,D,t,medium,top,open_top,bottom,bottom_opt,rings,ring_w,ring_t,reinforce,rein_side,rein_spans,productzijde
+filterslang,1.0.0,SMOKE_EDGE,800,120,1.2,PPS_550,gezoomd,False,enkel,gat_lusje,"[200, 400, 600]",8,1.6,True,onder,"[[100, 150], [500, 650]]",binnen

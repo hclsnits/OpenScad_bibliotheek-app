@@ -1,0 +1,26 @@
+name = "filterslang"
+version = "1.0.0"
+entry = "filterslang.scad"
+units = "mm"
+
+
+[bom]
+tag = "bom_tag"
+keys = [
+"L","D","t","medium","top","open_top",
+"bottom","bottom_opt","rings","ring_w","ring_t",
+"reinforce","rein_side","rein_spans","productzijde"
+]
+
+
+[enums]
+productzijde = ["buiten","binnen"]
+
+
+[enums.bottom]
+values = ["enkel","dubbel","platdicht"]
+
+
+[enums.bottom_opt]
+for_enkel_dubbel = ["zonder","lusje","gat","gat_lusje","doorlaat_ophangstang"]
+for_platdicht = ["zonder","ophangstang","zoom"]

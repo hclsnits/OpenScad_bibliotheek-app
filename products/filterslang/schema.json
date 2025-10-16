@@ -1,0 +1,46 @@
+{
+"$schema": "https://json-schema.org/draft/2020-12/schema",
+"title": "filterslang",
+"type": "object",
+"properties": {
+"L": { "type": "number", "minimum": 1 },
+"D": { "type": "number", "minimum": 1 },
+"t": { "type": "number", "minimum": 0.1 },
+"medium": { "type": "string" },
+"top": { "enum": ["klemband","sponsrubber","koordzoom","onafgewerkt","gezoomd","kopring","snapring","viltring"] },
+"open_top": { "type": "boolean" },
+"bottom": { "enum": ["enkel","dubbel","platdicht"] },
+"bottom_opt": { "type": "string" },
+"rings_auto": { "type": "boolean" },
+"rings_count": { "type": "integer", "minimum": 0 },
+"rings_positions": {
+"type": "array",
+"items": { "type": "number", "minimum": 0 }
+},
+"ring_w": { "type": "number", "minimum": 0.1 },
+"ring_t": { "type": "number", "minimum": 0.1 },
+"reinforce_enable": { "type": "boolean" },
+"reinforce_side": { "enum": ["boven","onder"] },
+"reinforce_spans": {
+"type": "array",
+"items": {
+"type": "array",
+"prefixItems": [
+{ "type": "number", "minimum": 0 },
+{ "type": "number", "minimum": 0 }
+],
+"minItems": 2,
+"maxItems": 2
+}
+},
+"productzijde": { "enum": ["buiten","binnen"] },
+"bom_tag": { "type": "string" }
+},
+"required": ["L","D","t","top","bottom","productzijde"],
+"allOf": [
+{ "if": { "properties": { "rings_auto": { "const": true } } },
+"then": { "properties": { "rings_count": { "minimum": 0 } } } },
+{ "if": { "properties": { "rings_auto": { "const": false } } },
+"then": { "required": ["rings_positions"] } }
+]
+}
