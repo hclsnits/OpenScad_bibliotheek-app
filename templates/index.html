@@ -328,7 +328,12 @@
                     <div class="progress-fill" id="progressBar" style="width: 0%">0%</div>
                 </div>
                 <p id="currentStep">Initializing...</p>
+                <div id="errorDetails" class="error" style="display:none;"></div>
                 <div class="job-logs" id="jobLogs"></div>
+                <div class="button-group" id="retryButtons" style="display:none;">
+                    <button class="btn btn-secondary" onclick="resetForm()">Start Over</button>
+                    <button class="btn btn-primary" onclick="goToStep(4)">Edit Configuration</button>
+                </div>
             </div>
             
             <!-- Step 6: Download -->
@@ -519,8 +524,24 @@
                     if (data.status === 'completed') {
                         showDownloads(data.outputs);
                         goToStep(6);
-                    } else if (data.status === 'failed' || data.status === 'error') {
-                        alert('Generation failed. Check logs for details.');
+                    } else if (data.status === 'failed' || data.status === 'error' || data.status === 'timeout') {
+                        // Show detailed error message
+                        const errorMsg = data.error_details || 'Generation failed. Check logs for details.';
+                        document.getElementById('currentStep').innerHTML = 
+                            `<span style="color: #c00;">Generation Failed: ${data.status}</span>`;
+                        document.getElementById('progressBar').style.background = '#c00';
+                        
+                        // Display error details in dedicated area
+                        const errorDiv = document.getElementById('errorDetails');
+                        errorDiv.style.display = 'block';
+                        errorDiv.innerHTML = `
+                            <strong>Error Details:</strong><br>
+                            <pre style="white-space: pre-wrap; margin-top: 10px; font-size: 11px; max-height: 150px; overflow-y: auto;">${escapeHtml(errorMsg)}</pre>
+                            <p style="margin-top: 10px;">Please check the logs below and adjust your configuration. Common issues include invalid dimensions or incompatible closure options.</p>
+                        `;
+                        
+                        // Show retry buttons
+                        document.getElementById('retryButtons').style.display = 'flex';
                     } else {
                         setTimeout(pollJobStatus, 1000);
                     }
@@ -552,10 +573,20 @@
             }
         }
         
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
         function resetForm() {
             currentJobId = null;
             selectedPreset = null;
             document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('selected'));
+            // Reset error display
+            document.getElementById('errorDetails').style.display = 'none';
+            document.getElementById('retryButtons').style.display = 'none';
+            document.getElementById('progressBar').style.background = '';
             goToStep(1);
         }
     </script>

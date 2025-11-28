@@ -220,6 +220,13 @@ def run_generation(job_id, config):
         if result.returncode != 0:
             job['status'] = 'failed'
             job['logs'].append(f'[ERROR] Generation failed with return code {result.returncode}')
+            # Capture error details from both stdout and stderr
+            error_output = []
+            if result.stderr:
+                error_output.append("STDERR:\n" + result.stderr[-1000:])  # Last 1000 chars
+            if result.stdout:
+                error_output.append("STDOUT:\n" + result.stdout[-1000:])
+            job['error_details'] = '\n\n'.join(error_output) if error_output else 'Generation failed. Check logs for details.'
             return
         
         job['progress'] = 100
@@ -244,12 +251,15 @@ def run_generation(job_id, config):
         
         job['logs'].append('[INFO] Model generation complete!')
         
-    except subprocess.TimeoutExpired:
+    except subprocess.TimeoutExpired as e:
         job['status'] = 'timeout'
         job['logs'].append('[ERROR] Generation timed out after 5 minutes')
+        job['error_details'] = f'Model generation timed out after 5 minutes. This usually means OpenSCAD is taking too long to render the model. Try simplifying your configuration (smaller dimensions or fewer rings).\n\nCommand: {e.cmd}'
     except Exception as e:
         job['status'] = 'error'
-        job['logs'].append(f'[ERROR] {str(e)}')
+        error_msg = str(e)
+        job['logs'].append(f'[ERROR] {error_msg}')
+        job['error_details'] = f'Unexpected error during generation:\n{error_msg}\n\nThis may be due to invalid configuration format or system issues. Please check your inputs and try again.'
 
 
 @app.route('/api/generate/<job_id>', methods=['GET'])
@@ -260,14 +270,20 @@ def get_job_status(job_id):
     
     job = JOBS[job_id]
     
-    return jsonify({
+    response = {
         'job_id': job['id'],
         'status': job['status'],
         'progress': job['progress'],
         'current_step': job['current_step'],
         'logs': job['logs'][-20:],  # Last 20 log lines
         'outputs': job.get('outputs', {})
-    })
+    }
+    
+    # Include error details if job failed
+    if job['status'] in ['failed', 'error', 'timeout']:
+        response['error_details'] = job.get('error_details', 'Check logs for details')
+    
+    return jsonify(response)
 
 
 @app.route('/api/download/<job_id>/<file_type>', methods=['GET'])

@@ -17,6 +17,12 @@ This is a parametric 3D filter sleeve generator built with OpenSCAD and Python. 
 - Configured deployment for autoscale (stateless web app)
 - Added .gitignore for Python and generated files
 - Successfully tested CLI generation with example configurations
+- **Improvements after architect review:**
+  - Enhanced error handling: subprocess failures now capture stderr/stdout as error_details
+  - Improved frontend error display with dedicated error area and retry buttons
+  - Added visual feedback (red progress bar) when generation fails
+  - Error details now surfaced to users with actionable guidance
+  - Reset functionality clears error states properly
 
 ## Project Architecture
 
