@@ -202,20 +202,23 @@ def run_generation(job_id, config):
                 job['logs'].append(line)
                 
                 # Update progress based on steps
-                if '[1/5]' in line:
-                    job['progress'] = 30
+                if '[1/6]' in line:
+                    job['progress'] = 20
                     job['current_step'] = 'Parsing configuration...'
-                elif '[2/5]' in line:
-                    job['progress'] = 45
+                elif '[2/6]' in line:
+                    job['progress'] = 35
                     job['current_step'] = 'Generating OpenSCAD file...'
-                elif '[3/5]' in line:
-                    job['progress'] = 60
+                elif '[3/6]' in line:
+                    job['progress'] = 50
                     job['current_step'] = 'Rendering with OpenSCAD...'
-                elif '[4/5]' in line:
-                    job['progress'] = 75
+                elif '[4/6]' in line:
+                    job['progress'] = 65
                     job['current_step'] = 'Extracting BOM...'
-                elif '[5/5]' in line:
-                    job['progress'] = 90
+                elif '[5/6]' in line:
+                    job['progress'] = 80
+                    job['current_step'] = 'Generating 3D model (STL)...'
+                elif '[6/6]' in line:
+                    job['progress'] = 95
                     job['current_step'] = 'Generating DXF...'
         
         if result.returncode != 0:

@@ -23,6 +23,12 @@ This is a parametric 3D filter sleeve generator built with OpenSCAD and Python. 
   - Added visual feedback (red progress bar) when generation fails
   - Error details now surfaced to users with actionable guidance
   - Reset functionality clears error states properly
+- **3D Viewer Integration:**
+  - Added Three.js 3D viewer with ES module imports (import maps)
+  - STL files rendered with OrbitControls for mouse interaction (rotate, zoom, pan)
+  - Auto-fit camera to model bounding box
+  - Phong material with lighting for realistic filter sleeve appearance
+  - Model automatically oriented upright after loading
 
 ## Project Architecture
 
