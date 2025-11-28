@@ -192,7 +192,8 @@ def run_generation(job_id, config):
             cmd,
             capture_output=True,
             text=True,
-            timeout=300
+            timeout=300,
+            cwd=str(OUTPUT_DIR.parent.parent)  # Run from project root for proper library resolution
         )
         
         # Parse output
@@ -235,6 +236,7 @@ def run_generation(job_id, config):
         
         # List output files
         output_files = {
+            'stl': OUTPUT_DIR / f"{config_name}.stl",
             'dxf': OUTPUT_DIR / f"{config_name}.dxf",
             'xlsx': OUTPUT_DIR / f"{config_name}_bom_production.xlsx",
             'csv': OUTPUT_DIR / f"{config_name}_bom.csv",
