@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filterslang Configurator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .step {
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .range-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .preset-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .preset-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .preset-card.selected {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+        
+        .preset-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .job-logs {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        
+        .download-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .download-item:hover {
+            background: #f0f0f0;
+        }
+        
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c00;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .summary-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .summary-table td:first-child {
+            font-weight: 600;
+            width: 40%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>OpenSCAD Filterslang Configurator</h1>
+            <p>Configure and generate custom filter sleeves</p>
+        </header>
+        
+        <div class="content">
+            <!-- Step 1: Preset Selection -->
+            <div id="step1" class="step active">
+                <h2>Step 1: Select Material Preset</h2>
+                <div id="presetList"></div>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="goToStep(2)">Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Basic Dimensions -->
+            <div id="step2" class="step">
+                <h2>Step 2: Configure Dimensions</h2>
+                <div class="form-group">
+                    <label>Configuration Name:</label>
+                    <input type="text" id="configName" value="My_Custom_Filter">
+                </div>
+                <div class="form-group">
+                    <label>Length (L) - mm:</label>
+                    <input type="number" id="length" value="2000">
+                    <div class="range-hint" id="lengthHint"></div>
+                </div>
+                <div class="form-group">
+                    <label>Diameter (D) - mm:</label>
+                    <input type="number" id="diameter" value="160">
+                    <div class="range-hint" id="diameterHint"></div>
+                </div>
+                <div class="form-group">
+                    <label>Thickness (t) - mm:</label>
+                    <input type="number" step="0.1" id="thickness" value="2.0">
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="goToStep(1)">Back</button>
+                    <button class="btn btn-primary" onclick="goToStep(3)">Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Closures -->
+            <div id="step3" class="step">
+                <h2>Step 3: Configure Closures</h2>
+                <div class="form-group">
+                    <label>Top Closure:</label>
+                    <select id="topClosure"></select>
+                </div>
+                <div class="form-group">
+                    <label>Bottom Type:</label>
+                    <select id="bottomType"></select>
+                </div>
+                <div class="form-group">
+                    <label>Bottom Option:</label>
+                    <select id="bottomOpt"></select>
+                </div>
+                <div class="form-group">
+                    <label>Material Side (Productzijde):</label>
+                    <select id="productzijde">
+                        <option value="buiten">Buiten (Outside)</option>
+                        <option value="binnen">Binnen (Inside)</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="goToStep(2)">Back</button>
+                    <button class="btn btn-primary" onclick="goToStep(4)">Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Review & Generate -->
+            <div id="step4" class="step">
+                <h2>Step 4: Review & Generate</h2>
+                <table class="summary-table" id="summaryTable">
+                    <tr><td>Configuration Name:</td><td id="sum_name"></td></tr>
+                    <tr><td>Preset:</td><td id="sum_preset"></td></tr>
+                    <tr><td>Length (L):</td><td id="sum_length"></td></tr>
+                    <tr><td>Diameter (D):</td><td id="sum_diameter"></td></tr>
+                    <tr><td>Thickness (t):</td><td id="sum_thickness"></td></tr>
+                    <tr><td>Top Closure:</td><td id="sum_top"></td></tr>
+                    <tr><td>Bottom Type:</td><td id="sum_bottom"></td></tr>
+                    <tr><td>Bottom Option:</td><td id="sum_bottomOpt"></td></tr>
+                    <tr><td>Material Side:</td><td id="sum_productzijde"></td></tr>
+                </table>
+                <div id="validationErrors"></div>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="goToStep(3)">Back</button>
+                    <button class="btn btn-primary" onclick="generateModel()">Generate Model</button>
+                </div>
+            </div>
+            
+            <!-- Step 5: Generation Progress -->
+            <div id="step5" class="step">
+                <h2>Generating Model...</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%">0%</div>
+                </div>
+                <p id="currentStep">Initializing...</p>
+                <div class="job-logs" id="jobLogs"></div>
+            </div>
+            
+            <!-- Step 6: Download -->
+            <div id="step6" class="step">
+                <h2>Generation Complete!</h2>
+                <p>Your model has been generated successfully. Download the files below:</p>
+                <div id="downloadLinks" style="margin-top: 20px;"></div>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="resetForm()">Generate Another</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let presets = {};
+        let validEnums = {};
+        let selectedPreset = null;
+        let currentJobId = null;
+        
+        // Load presets on page load
+        fetch('/api/presets')
+            .then(r => r.json())
+            .then(data => {
+                presets = data.presets;
+                validEnums = data.valid_enums;
+                renderPresets();
+                populateEnums();
+            });
+        
+        function renderPresets() {
+            const list = document.getElementById('presetList');
+            list.innerHTML = '';
+            
+            for (const [key, preset] of Object.entries(presets)) {
+                const card = document.createElement('div');
+                card.className = 'preset-card';
+                card.onclick = () => selectPreset(key);
+                card.innerHTML = `
+                    <h3>${preset.material}</h3>
+                    <p>${preset.description}</p>
+                    <p style="margin-top:10px; font-size:12px; color:#666;">
+                        Diameter: ${preset.defaults.diameter_min}-${preset.defaults.diameter_max}mm | 
+                        Length: ${preset.defaults.length_min}-${preset.defaults.length_max}mm
+                    </p>
+                `;
+                list.appendChild(card);
+            }
+        }
+        
+        function selectPreset(key) {
+            selectedPreset = key;
+            document.querySelectorAll('.preset-card').forEach((c, i) => {
+                c.classList.toggle('selected', Object.keys(presets)[i] === key);
+            });
+            
+            const preset = presets[key];
+            document.getElementById('length').value = preset.recommended[1].L;
+            document.getElementById('diameter').value = preset.recommended[1].D;
+            document.getElementById('thickness').value = preset.recommended[1].t;
+            
+            updateRangeHints();
+        }
+        
+        function updateRangeHints() {
+            if (!selectedPreset) return;
+            const preset = presets[selectedPreset];
+            document.getElementById('lengthHint').textContent = 
+                `Range: ${preset.defaults.length_min} - ${preset.defaults.length_max} mm`;
+            document.getElementById('diameterHint').textContent = 
+                `Range: ${preset.defaults.diameter_min} - ${preset.defaults.diameter_max} mm`;
+        }
+        
+        function populateEnums() {
+            const topSelect = document.getElementById('topClosure');
+            validEnums.top.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                topSelect.appendChild(opt);
+            });
+            
+            const bottomSelect = document.getElementById('bottomType');
+            validEnums.bottom.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                bottomSelect.appendChild(opt);
+            });
+            
+            bottomSelect.onchange = updateBottomOptions;
+            updateBottomOptions();
+        }
+        
+        function updateBottomOptions() {
+            const bottomType = document.getElementById('bottomType').value;
+            const bottomOptSelect = document.getElementById('bottomOpt');
+            bottomOptSelect.innerHTML = '';
+            
+            const options = validEnums.bottom_opt[bottomType] || [];
+            options.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                bottomOptSelect.appendChild(opt);
+            });
+        }
+        
+        function goToStep(step) {
+            if (step === 2 && !selectedPreset) {
+                alert('Please select a preset first');
+                return;
+            }
+            
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            
+            if (step === 4) {
+                updateSummary();
+            }
+        }
+        
+        function updateSummary() {
+            document.getElementById('sum_name').textContent = document.getElementById('configName').value;
+            document.getElementById('sum_preset').textContent = selectedPreset;
+            document.getElementById('sum_length').textContent = document.getElementById('length').value + ' mm';
+            document.getElementById('sum_diameter').textContent = document.getElementById('diameter').value + ' mm';
+            document.getElementById('sum_thickness').textContent = document.getElementById('thickness').value + ' mm';
+            document.getElementById('sum_top').textContent = document.getElementById('topClosure').value;
+            document.getElementById('sum_bottom').textContent = document.getElementById('bottomType').value;
+            document.getElementById('sum_bottomOpt').textContent = document.getElementById('bottomOpt').value;
+            document.getElementById('sum_productzijde').textContent = document.getElementById('productzijde').value;
+        }
+        
+        function generateModel() {
+            const config = {
+                name: document.getElementById('configName').value,
+                preset: selectedPreset,
+                overrides: {
+                    L: parseInt(document.getElementById('length').value),
+                    D: parseInt(document.getElementById('diameter').value),
+                    t: parseFloat(document.getElementById('thickness').value),
+                    top: document.getElementById('topClosure').value,
+                    bottom: document.getElementById('bottomType').value,
+                    bottom_opt: document.getElementById('bottomOpt').value,
+                    productzijde: document.getElementById('productzijde').value,
+                    rings_auto: true,
+                    rings_count: 6,
+                    ring_w: 10,
+                    ring_t: 2,
+                    reinforce_enable: false
+                }
+            };
+            
+            fetch('/api/generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(config)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('validationErrors').innerHTML = 
+                        `<div class="error">${data.error}: ${data.details.join(', ')}</div>`;
+                    return;
+                }
+                
+                currentJobId = data.job_id;
+                goToStep(5);
+                pollJobStatus();
+            });
+        }
+        
+        function pollJobStatus() {
+            if (!currentJobId) return;
+            
+            fetch('/api/generate/' + currentJobId)
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('progressBar').style.width = data.progress + '%';
+                    document.getElementById('progressBar').textContent = data.progress + '%';
+                    document.getElementById('currentStep').textContent = data.current_step;
+                    
+                    const logsDiv = document.getElementById('jobLogs');
+                    logsDiv.innerHTML = data.logs.slice(-10).join('\n');
+                    logsDiv.scrollTop = logsDiv.scrollHeight;
+                    
+                    if (data.status === 'completed') {
+                        showDownloads(data.outputs);
+                        goToStep(6);
+                    } else if (data.status === 'failed' || data.status === 'error') {
+                        alert('Generation failed. Check logs for details.');
+                    } else {
+                        setTimeout(pollJobStatus, 1000);
+                    }
+                });
+        }
+        
+        function showDownloads(outputs) {
+            const div = document.getElementById('downloadLinks');
+            div.innerHTML = '';
+            
+            const fileTypes = {
+                'dxf': '2D CAD Drawing (DXF)',
+                'xlsx': 'Production BOM (Excel)',
+                'csv': 'BOM CSV',
+                'jsonl': 'Technical Parameters (JSON)'
+            };
+            
+            for (const [type, info] of Object.entries(outputs)) {
+                const item = document.createElement('div');
+                item.className = 'download-item';
+                item.innerHTML = `
+                    <div>
+                        <strong>${fileTypes[type]}</strong><br>
+                        <small>${info.filename} (${(info.size / 1024).toFixed(1)} KB)</small>
+                    </div>
+                    <a href="/api/download/${currentJobId}/${type}" class="btn btn-primary" download>Download</a>
+                `;
+                div.appendChild(item);
+            }
+        }
+        
+        function resetForm() {
+            currentJobId = null;
+            selectedPreset = null;
+            document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('selected'));
+            goToStep(1);
+        }
+    </script>
+</body>
+</html>
