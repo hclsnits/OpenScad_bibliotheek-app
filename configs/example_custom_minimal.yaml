@@ -1,0 +1,21 @@
+# Example 4: Minimal/custom configuration
+name: "CustomFilter_Experimental"
+preset: "PE_500"
+
+overrides:
+  L: 1200
+  D: 100
+  t: 1.5
+  top: "klemband"
+  bottom: "platdicht"
+  bottom_opt: "ophangstang"
+  rings_auto: true
+  rings_count: 4
+  ring_w: 8
+  ring_t: 1.2
+  reinforce_enable: false
+  productzijde: "binnen"
+
+output:
+  dir: "out"
+  formats: ["scad", "echo", "dxf"]

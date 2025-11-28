@@ -1,0 +1,23 @@
+category,enum_value,material_code,part_no,description,unit,supplier
+material,PE_500,PE-500,12-3456,Polyethylene 500 micron film,m,Ai Lampe BV
+material,PPS_550,PPS-550,12-3789,Polypropylene 550 micron film,m,Ai Lampe BV
+top,snapring,SNAP-STD,45-6789,Snapring closure standard,pcs,Flexibles BV
+top,kopring,KOPRING,45-6790,Metal ring closure,pcs,Flexibles BV
+top,klemband,KLEM-STD,45-6791,Clamp band closure,pcs,Flexibles BV
+top,sponsrubber,SPON-RUB,45-6792,Foam rubber edge,pcs,Flexibles BV
+top,koordzoom,KOORDZOOM,45-6793,Cord edge seal,pcs,Flexibles BV
+top,onafgewerkt,ONAFG,45-6794,Raw/unfinished edge,pcs,Flexibles BV
+top,gezoomd,GEZOOMD,45-6795,Sewn edge,pcs,Flexibles BV
+top,viltring,VILT-RING,45-6796,Felt ring,pcs,Flexibles BV
+bottom,enkel,BODEM-ENK,56-7890,Single bottom,pcs,Flexibles BV
+bottom,dubbel,BODEM-DUB,56-7891,Double bottom,pcs,Flexibles BV
+bottom,platdicht,BODEM-PLAT,56-7892,Sealed flat bottom,pcs,Flexibles BV
+bottom_opt,zonder,OPT-GEEN,70-1234,No option,pcs,Internal
+bottom_opt,lusje,OPT-LUSJE,70-1235,Loop attachment,pcs,Flexibles BV
+bottom_opt,gat,OPT-GAT,70-1236,Hole perforation,pcs,Flexibles BV
+bottom_opt,gat_lusje,OPT-GATLUSJE,70-1237,Hole + loop,pcs,Flexibles BV
+bottom_opt,doorlaat_ophangstang,OPT-DOORLAAT,70-1238,Rod passage,pcs,Flexibles BV
+bottom_opt,ophangstang,OPT-OPHANG,70-1239,Hanging rod,pcs,Flexibles BV
+bottom_opt,zoom,OPT-ZOOM,70-1240,Sewn edge,pcs,Flexibles BV
+reinforcement,boven,VERST-BOV,80-2345,Top reinforcement strip,m,Flexibles BV
+reinforcement,onder,VERST-OND,80-2346,Bottom reinforcement strip,m,Flexibles BV

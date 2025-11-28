@@ -1,0 +1,2 @@
+product,version,bom_tag,material,material_code,material_part_no,material_supplier,length_mm,diameter_mm,thickness_mm,top_type,top_part_no,top_supplier,bottom_type,bottom_option,bottom_part_no,bottom_option_part_no,ring_count,ring_width_mm,ring_thickness_mm,reinforce_enabled,reinforcement_type,reinforcement_part_no,reinforcement_length_mm,productzijde,surface_area_m2,cut_length_estimate_m
+filterslang,1.0.0,SMOKE_EDGE,PPS_550,PPS-550,12-3789,Ai Lampe BV,800,120,1.2,gezoomd,45-6795,Flexibles BV,enkel,gat_lusje,56-7890,70-1237,3,8,1.6,Yes,onder,80-2346,200,binnen,0.3016,302.72

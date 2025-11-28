@@ -1,0 +1,24 @@
+# Example 1: Standard PE_500 medium size filter
+name: "PE500_Medium_Standard"
+preset: "PE_500"
+
+overrides:
+  L: 2000
+  D: 160
+  t: 2.0
+  top: "snapring"
+  bottom: "platdicht"
+  bottom_opt: "zoom"
+  rings_auto: true
+  rings_count: 6
+  ring_w: 10
+  ring_t: 2
+  reinforce_enable: true
+  reinforce_side: "boven"
+  reinforce_spans:
+    - [100, 200]
+  productzijde: "buiten"
+
+output:
+  dir: "out"
+  formats: ["scad", "echo", "dxf"]

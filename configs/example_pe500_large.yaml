@@ -1,0 +1,22 @@
+# Example 3: Large PE_500 industrial filter with minimal reinforcement
+name: "PE500_Large_Industrial"
+preset: "PE_500"
+
+overrides:
+  L: 3500
+  D: 250
+  t: 2.5
+  top: "kopring"
+  open_top: false
+  bottom: "dubbel"
+  bottom_opt: "lusje"
+  rings_auto: true
+  rings_count: 8
+  ring_w: 12
+  ring_t: 2
+  reinforce_enable: false
+  productzijde: "buiten"
+
+output:
+  dir: "out"
+  formats: ["scad", "dxf"]

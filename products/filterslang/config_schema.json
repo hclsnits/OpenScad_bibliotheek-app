@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Filterslang User Configuration",
+  "description": "User-friendly configuration for generating filterslang models",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Configuration name (e.g., 'MyFilter_PE500_Medium')"
+    },
+    "preset": {
+      "type": "string",
+      "enum": ["PE_500", "PPS_550"],
+      "description": "Material preset to use as base"
+    },
+    "overrides": {
+      "type": "object",
+      "description": "Override preset defaults",
+      "properties": {
+        "L": {"type": "number", "minimum": 100, "description": "Length (mm)"},
+        "D": {"type": "number", "minimum": 30, "description": "Diameter (mm)"},
+        "t": {"type": "number", "minimum": 0.5, "description": "Thickness (mm)"},
+        "top": {
+          "type": "string",
+          "enum": ["klemband", "sponsrubber", "koordzoom", "onafgewerkt", "gezoomd", "kopring", "snapring", "viltring"],
+          "description": "Top closure type"
+        },
+        "open_top": {"type": "boolean", "description": "Leave top open"},
+        "bottom": {
+          "type": "string",
+          "enum": ["enkel", "dubbel", "platdicht"],
+          "description": "Bottom type"
+        },
+        "bottom_opt": {
+          "type": "string",
+          "description": "Bottom sub-option (depends on bottom type)"
+        },
+        "rings_auto": {
+          "type": "boolean",
+          "description": "Auto-distribute rings (true) or manual positions (false)"
+        },
+        "rings_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of rings (if rings_auto=true)"
+        },
+        "rings_positions": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Ring positions (if rings_auto=false)"
+        },
+        "ring_w": {"type": "number", "minimum": 0.5, "description": "Ring width (mm)"},
+        "ring_t": {"type": "number", "minimum": 0.5, "description": "Ring thickness (mm)"},
+        "reinforce_enable": {"type": "boolean", "description": "Enable reinforcement"},
+        "reinforce_side": {
+          "type": "string",
+          "enum": ["boven", "onder"],
+          "description": "Reinforcement placement"
+        },
+        "reinforce_spans": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {"type": "number"}
+          },
+          "description": "Reinforcement span ranges [[start, end], ...]"
+        },
+        "productzijde": {
+          "type": "string",
+          "enum": ["buiten", "binnen"],
+          "description": "Material side orientation"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Output file specifications",
+      "properties": {
+        "dir": {
+          "type": "string",
+          "default": "out",
+          "description": "Output directory"
+        },
+        "formats": {
+          "type": "array",
+          "items": {"type": "string"},
+          "enum": ["scad", "echo", "dxf", "stl"],
+          "description": "Output formats (scad=source, echo=render log, dxf=2D, stl=3D)"
+        }
+      }
+    }
+  },
+  "required": ["name", "preset"],
+  "additionalProperties": false
+}

@@ -1,0 +1,2 @@
+product,version,bom_tag,material,material_code,material_part_no,material_supplier,length_mm,diameter_mm,thickness_mm,top_type,top_part_no,top_supplier,bottom_type,bottom_option,bottom_part_no,bottom_option_part_no,ring_count,ring_width_mm,ring_thickness_mm,reinforce_enabled,reinforcement_type,reinforcement_part_no,reinforcement_length_mm,productzijde,surface_area_m2,cut_length_estimate_m
+filterslang,1.0.0,SMOKE_DEFAULT,PE_500,PE-500,12-3456,Ai Lampe BV,2000,160,2,snapring,45-6789,Flexibles BV,platdicht,zoom,56-7892,70-1240,6,10,2,Yes,boven,80-2345,100,buiten,1.0053,1008.33

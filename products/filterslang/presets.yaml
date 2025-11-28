@@ -1,0 +1,46 @@
+# products/filterslang/presets.yaml
+# Preset material & dimension definitions for quick configuration
+
+presets:
+  PE_500:
+    description: "Polyethylene 500 micron - Standard general purpose"
+    material: "PE_500"
+    defaults:
+      thickness: 2.0          # mm
+      diameter_min: 80        # mm
+      diameter_max: 500       # mm
+      length_min: 500         # mm
+      length_max: 5000        # mm
+      top: "snapring"
+      bottom: "platdicht"
+    recommended:
+      - {name: "Small", L: 1000, D: 100, t: 1.8}
+      - {name: "Medium", L: 2000, D: 160, t: 2.0}
+      - {name: "Large", L: 3000, D: 200, t: 2.2}
+
+  PPS_550:
+    description: "Polypropylene 550 micron - Heat resistant"
+    material: "PPS_550"
+    defaults:
+      thickness: 1.5          # mm
+      diameter_min: 60        # mm
+      diameter_max: 400       # mm
+      length_min: 300         # mm
+      length_max: 4000        # mm
+      top: "klemband"
+      bottom: "enkel"
+    recommended:
+      - {name: "Small", L: 500, D: 80, t: 1.2}
+      - {name: "Medium", L: 1500, D: 120, t: 1.5}
+      - {name: "Large", L: 2500, D: 180, t: 1.8}
+
+# Valid values for enums (for validation)
+valid_enums:
+  top: ["klemband", "sponsrubber", "koordzoom", "onafgewerkt", "gezoomd", "kopring", "snapring", "viltring"]
+  bottom: ["enkel", "dubbel", "platdicht"]
+  bottom_opt:
+    enkel: ["zonder", "lusje", "gat", "gat_lusje", "doorlaat_ophangstang"]
+    dubbel: ["zonder", "lusje", "gat", "gat_lusje", "doorlaat_ophangstang"]
+    platdicht: ["zonder", "ophangstang", "zoom"]
+  productzijde: ["buiten", "binnen"]
+  reinforce_side: ["boven", "onder"]

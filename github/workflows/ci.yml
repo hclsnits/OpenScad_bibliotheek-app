@@ -49,6 +49,15 @@ jobs:
             openscad -o out/smoke_default.echo tests/smoke_filterslang_default.scad
           }
 
+      - name: Render DEFAULT DXF (2D projection)
+        shell: pwsh
+        run: |
+          if ($env:RUNNER_OS -eq "Windows") {
+            openscad.com -o .\out\smoke_default.dxf "tests\smoke_filterslang_default_dxf.scad"
+          } else {
+            openscad -o out/smoke_default.dxf tests/smoke_filterslang_default_dxf.scad
+          }
+
       - name: Extract DEFAULT BOM and compare with golden
         shell: pwsh
         run: |
@@ -72,11 +81,20 @@ jobs:
             openscad -o out/smoke_edge.echo tests/smoke_filterslang_edgecases.scad
           }
 
+      - name: Render EDGE DXF (2D projection)
+        shell: pwsh
+        run: |
+          if ($env:RUNNER_OS -eq "Windows") {
+            openscad.com -o .\out\smoke_edge.dxf "tests\smoke_filterslang_edgecases_dxf.scad"
+          } else {
+            openscad -o out/smoke_edge.dxf tests/smoke_filterslang_edgecases_dxf.scad
+          }
+
       - name: Extract EDGE BOM and compare with golden
         shell: pwsh
         run: |
           if ($env:RUNNER_OS -eq "Windows") {
-            python .\scripts\render_bom.py --product filterslang --version 1.0s.0 `
+            python .\scripts\render_bom.py --product filterslang --version 1.0.0 `
               --echo .\out\smoke_edge.echo --jsonl .\out\bom_edge.jsonl `
             | python .\scripts\bom_diff.py .\tests\golden\bom_edge.jsonl --epsilon 0.0005
           } else {
@@ -85,9 +103,41 @@ jobs:
             | python scripts/bom_diff.py tests/golden/bom_edge.jsonl --epsilon 0.0005
           }
 
+      # -------- BOM PRODUCTION (Phase 2) ----------
+      - name: Produce DEFAULT BOM (JSONL → CSV/XLSX)
+        shell: pwsh
+        run: |
+          if ($env:RUNNER_OS -eq "Windows") {
+            python .\scripts\bom_producer.py --jsonl .\out\bom_default.jsonl `
+              --parts .\data\parts.csv --csv .\out\bom_default_production.csv `
+              --xlsx .\out\bom_default_production.xlsx
+          } else {
+            python scripts/bom_producer.py --jsonl out/bom_default.jsonl \
+              --parts data/parts.csv --csv out/bom_default_production.csv \
+              --xlsx out/bom_default_production.xlsx
+          }
+
+      - name: Produce EDGE BOM (JSONL → CSV/XLSX)
+        shell: pwsh
+        run: |
+          if ($env:RUNNER_OS -eq "Windows") {
+            python .\scripts\bom_producer.py --jsonl .\out\bom_edge.jsonl `
+              --parts .\data\parts.csv --csv .\out\bom_edge_production.csv `
+              --xlsx .\out\bom_edge_production.xlsx
+          } else {
+            python scripts/bom_producer.py --jsonl out/bom_edge.jsonl \
+              --parts data/parts.csv --csv out/bom_edge_production.csv \
+              --xlsx out/bom_edge_production.xlsx
+          }
+
       # --- Artifacts ---
-      - name: Upload JSONL artifacts
+      - name: Upload BOM, DXF, and Production artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: bom-${{ matrix.os }}
-          path: out/*.jsonl
+          name: smoke-results-${{ matrix.os }}
+          path: |
+            out/*.jsonl
+            out/*.dxf
+            out/*_production.csv
+            out/*_production.xlsx
+            data/parts.csv
