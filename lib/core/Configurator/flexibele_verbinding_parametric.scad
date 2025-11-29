@@ -15,7 +15,7 @@ D_out = 60;           // Outer diameter (mm) [20:150]
 
 /* [Material] */
 material = "PU";      // [PU, silicone, rubber, EPDM, PVC]
-color_mat = [0.9, 0.9, 0.95];  // Custom color [R,G,B]
+color_mat = [1.0, 1.0, 1.0, 0.15];  // Custom color [R,G,B,A] - PU semi-transparent white
 
 /* [End Connectors] */
 end_type_1 = "jacob";      // ["snelkoppeling", "jacob", "triclamp", "bfm"]

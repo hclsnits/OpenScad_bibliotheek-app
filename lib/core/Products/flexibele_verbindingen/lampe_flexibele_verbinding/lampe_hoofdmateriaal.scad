@@ -1,6 +1,6 @@
-// fv_hoofdmateriaal.scad
-// Main flexible tubing component for flexible connectors
-// OPEN at both ends - no closures
+// lampe_hoofdmateriaal.scad
+// LAMPE Main Flexible Tubing Component
+// OPEN hollow cylinder - central connector element
 
 /**
  * Main flexible tube - OPEN hollow cylinder
@@ -10,10 +10,10 @@
  * @param D_in      Inner diameter (mm)
  * @param D_out     Outer diameter (mm)
  * @param material  Material type identifier (for reference)
- * @param color_mat RGB color vector [R, G, B]
+ * @param color_mat RGBA color vector [R, G, B, A]
  * @param $fn       Circle resolution (higher = smoother)
  */
-module fv_hoofdmateriaal(
+module lampe_hoofdmateriaal(
     L = 500,
     D_in = 50,
     D_out = 60,
@@ -30,7 +30,6 @@ module fv_hoofdmateriaal(
             cylinder(h = L, r = r_out, $fn = $fn);
             
             // Inner hollow (subtract to create tube)
-            // Add 0.1mm extra height to avoid rendering artifacts
             cylinder(h = L + 0.1, r = r_in, $fn = $fn);
         }
 }

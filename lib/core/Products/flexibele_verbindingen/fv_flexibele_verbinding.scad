@@ -27,7 +27,7 @@ module fv_flexibele_verbinding(
     D_in           = 50,
     D_out          = 60,
     material       = "PU",
-    color_mat      = [0.9, 0.9, 0.95],
+    color_mat      = [1.0, 1.0, 1.0, 0.15],
     end_type_1     = "snelkoppeling",
     end_type_2     = "triclamp",
     coupling_type_1 = "male",
