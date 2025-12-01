@@ -32,6 +32,60 @@ with open(PRESETS_FILE, 'r', encoding='utf-8') as f:
 PRESETS = PRESETS_DATA.get('presets', {})
 VALID_ENUMS = PRESETS_DATA.get('valid_enums', {})
 
+# Connector Database (Phase C.1)
+CONNECTOR_DATABASE = {
+    'snelkoppeling': {
+        'name': 'Quick Coupling (Snelkoppeling)',
+        'icon': '🔌',
+        'max_pressure': 250,
+        'max_temperature': 80,
+        'diameter_min': 12,
+        'diameter_max': 100,
+        'hygiene_classes': ['general', 'food'],
+        'description': 'Quick disconnect coupling for general industrial and food applications'
+    },
+    'jacob': {
+        'name': 'Welding End (Jacob)',
+        'icon': '🔗',
+        'max_pressure': 50,
+        'max_temperature': 120,
+        'diameter_min': 20,
+        'diameter_max': 150,
+        'hygiene_classes': ['general', 'atex'],
+        'description': 'Permanent welding connector for industrial use. Not reusable.'
+    },
+    'triclamp': {
+        'name': 'Triclamp (Sanitary)',
+        'icon': '🔧',
+        'max_pressure': 100,
+        'max_temperature': 100,
+        'diameter_min': 16,
+        'diameter_max': 150,
+        'hygiene_classes': ['food', 'pharma', 'medical'],
+        'description': 'Sanitary clamp connector. Perfect for food, pharmaceutical, and medical applications.'
+    },
+    'bfm': {
+        'name': 'BFM Spigot',
+        'icon': '⚙️',
+        'max_pressure': 280,
+        'max_temperature': 100,
+        'diameter_min': 100,
+        'diameter_max': 999,
+        'hygiene_classes': ['general'],
+        'description': 'Heavy-duty spigot connector for industrial hydraulic/pneumatic systems.'
+    }
+}
+
+# Sector to Hygiene Class Mapping
+SECTOR_HYGIENE_MAP = {
+    'onbekend': None,
+    'industrieel': 'general',
+    'voeding': 'food',
+    'farmaceutisch': 'pharma',
+    'medisch': 'medical',
+    'atex': 'atex'
+}
+
 
 @app.route('/')
 def index():
@@ -57,6 +111,14 @@ def get_preset(preset_id):
     return jsonify({
         'preset': PRESETS[preset_id],
         'valid_enums': VALID_ENUMS
+    })
+
+
+@app.route('/api/connectors', methods=['GET'])
+def get_connectors():
+    """Get connector database"""
+    return jsonify({
+        'connectors': CONNECTOR_DATABASE
     })
 
 
@@ -313,6 +375,131 @@ def download_file(job_id, file_type):
         as_attachment=True,
         download_name=file_info['filename']
     )
+
+
+@app.route('/api/generate-flexibele', methods=['POST'])
+def generate_flexibele_model():
+    """Start a flexibele verbindingen model generation job"""
+    config = request.get_json()
+    
+    # Validate required fields
+    errors = []
+    if 'name' not in config:
+        errors.append('Configuration name is required')
+    if 'sector' not in config:
+        errors.append('Sector is required')
+    if 'medium' not in config:
+        errors.append('Medium is required')
+    if 'connector_end1' not in config or 'connector_end2' not in config:
+        errors.append('Both connectors must be selected')
+    
+    # Validate connectors exist
+    for end in ['connector_end1', 'connector_end2']:
+        if config.get(end) not in CONNECTOR_DATABASE:
+            errors.append(f'{end}: Unknown connector type')
+    
+    # Validate dimensions
+    if config.get('diameter_inner', 0) >= config.get('diameter_outer', 0):
+        errors.append('Inner diameter must be less than outer diameter')
+    
+    if errors:
+        return jsonify({
+            'error': 'Configuration validation failed',
+            'details': errors
+        }), 400
+    
+    # Create job ID
+    job_id = str(uuid.uuid4())[:8]
+    
+    # Create job metadata
+    JOBS[job_id] = {
+        'id': job_id,
+        'status': 'queued',
+        'progress': 0,
+        'current_step': 'Initializing flexibele verbindingen generation...',
+        'created_at': datetime.now().isoformat(),
+        'config': config,
+        'logs': [],
+        'outputs': {}
+    }
+    
+    # Start generation in background thread
+    thread = threading.Thread(target=run_flexibele_generation, args=(job_id, config))
+    thread.daemon = True
+    thread.start()
+    
+    return jsonify({
+        'job_id': job_id,
+        'status': 'queued',
+        'created_at': JOBS[job_id]['created_at']
+    })
+
+
+def run_flexibele_generation(job_id, config):
+    """Background task to run flexibele verbindingen model generation"""
+    job = JOBS[job_id]
+    
+    try:
+        job['status'] = 'processing'
+        job['progress'] = 10
+        job['current_step'] = 'Creating configuration file...'
+        
+        # Create temporary config YAML
+        config_name = config.get('name', 'unnamed')
+        config_yaml_file = OUTPUT_DIR / f"{config_name}_config.yaml"
+        
+        with open(config_yaml_file, 'w', encoding='utf-8') as f:
+            yaml.dump(config, f)
+        
+        job['logs'].append('[INFO] Flexibele verbindingen configuration created')
+        job['progress'] = 30
+        job['current_step'] = 'Preparing 3D model generation...'
+        
+        # For now, simulate flexibele verbindingen generation
+        # In production, this would call the appropriate OpenSCAD scripts
+        job['logs'].append('[INFO] Sector: ' + config.get('sector', 'Unknown'))
+        job['logs'].append('[INFO] Medium: ' + config.get('medium', 'Unknown'))
+        job['logs'].append('[INFO] Connectors: ' + config.get('connector_end1', 'N/A') + ' / ' + config.get('connector_end2', 'N/A'))
+        
+        job['progress'] = 50
+        job['current_step'] = 'This feature is coming soon!'
+        job['logs'].append('[INFO] Flexibele verbindingen generation is currently in development')
+        job['logs'].append('[INFO] Placeholder generation for UI demonstration')
+        
+        job['progress'] = 100
+        job['current_step'] = 'Complete (Placeholder)'
+        job['status'] = 'completed'
+        job['logs'].append('[INFO] Placeholder generation complete - Feature in development')
+        
+        # Create placeholder output files
+        output_files = {
+            'scad': OUTPUT_DIR / f"{config_name}.scad",
+            'dxf': OUTPUT_DIR / f"{config_name}.dxf",
+            'jsonl': OUTPUT_DIR / f"{config_name}_bom.jsonl"
+        }
+        
+        # Create placeholder files so downloads work
+        for file_type, file_path in output_files.items():
+            if not file_path.exists():
+                with open(file_path, 'w') as f:
+                    if file_type == 'scad':
+                        f.write('// Placeholder OpenSCAD file - Feature in development\n')
+                    elif file_type == 'dxf':
+                        f.write('0\nSECTION\n2\nHEADER\n')
+                    else:
+                        f.write('{"placeholder": true, "product": "flexibele_verbindingen"}\n')
+            
+            job['outputs'][file_type] = {
+                'filename': file_path.name,
+                'size': file_path.stat().st_size,
+                'path': str(file_path)
+            }
+        
+    except Exception as e:
+        job['status'] = 'error'
+        error_msg = str(e)
+        job['logs'].append(f'[ERROR] {error_msg}')
+        job['error_details'] = f'Error during flexibele verbindingen generation:\n{error_msg}'
 
 
 @app.route('/api/examples', methods=['GET'])
