@@ -433,18 +433,7 @@
             flex: 1;
         }
         
-        .color-picker-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .color-preview {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
-            border: 2px solid #e0e0e0;
-        }
+        /* Color section removed - managed in backend */
     </style>
 </head>
 <body>
@@ -670,39 +659,19 @@
                 </div>
             </div>
             
-            <!-- FV Step 6: Material & Color -->
+            <!-- FV Step 6: Material Selection -->
             <div id="flexibele_step6" class="step">
-                <h2>Step 6: Material & Color</h2>
+                <h2>Step 6: Material Selection</h2>
+                <p style="color: #666; margin-bottom: 20px;">Choose the material for your tubing.</p>
                 <div class="form-group">
                     <label>Material:</label>
-                    <select id="fvMaterial" onchange="updateMaterialPreset()">
+                    <select id="fvMaterial">
                         <option value="PU">PU (Polyurethane) - Translucent</option>
                         <option value="Silicone">Silicone - Red</option>
                         <option value="Rubber">Rubber - Black</option>
                         <option value="EPDM">EPDM - Green</option>
                         <option value="PVC">PVC - Gray</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label>Color (RGB):</label>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-                        <div>
-                            <label style="font-size: 12px;">Red:</label>
-                            <input type="range" id="colorR" min="0" max="1" step="0.01" value="0.9" oninput="updateColorPreview()">
-                            <span id="colorRVal">0.9</span>
-                        </div>
-                        <div>
-                            <label style="font-size: 12px;">Green:</label>
-                            <input type="range" id="colorG" min="0" max="1" step="0.01" value="0.9" oninput="updateColorPreview()">
-                            <span id="colorGVal">0.9</span>
-                        </div>
-                        <div>
-                            <label style="font-size: 12px;">Blue:</label>
-                            <input type="range" id="colorB" min="0" max="1" step="0.01" value="0.95" oninput="updateColorPreview()">
-                            <span id="colorBVal">0.95</span>
-                        </div>
-                    </div>
-                    <div class="color-preview" id="colorPreview" style="margin-top: 15px;"></div>
                 </div>
                 <div class="button-group">
                     <button class="btn btn-secondary" onclick="goToStep('flexibele_step5')">Back</button>
@@ -724,7 +693,6 @@
                     <tr><td>Outer Diameter:</td><td id="fv_sum_dout"></td></tr>
                     <tr><td>Connectors:</td><td id="fv_sum_connectors"></td></tr>
                     <tr><td>Material:</td><td id="fv_sum_material"></td></tr>
-                    <tr><td>Color:</td><td id="fv_sum_color"></td></tr>
                 </table>
                 <div id="fvValidationErrors"></div>
                 <div class="button-group">
@@ -775,10 +743,7 @@
             diameterOut: 16,
             connectorEnd1: null,
             connectorEnd2: null,
-            material: 'PU',
-            colorR: 0.9,
-            colorG: 0.9,
-            colorB: 0.95
+            material: 'PU'
         };
         
         const SECTOR_OPTIONS = [
@@ -798,14 +763,6 @@
             { id: 'pharma', name: 'Pharmaceutical Fluid' },
             { id: 'other', name: 'Other' }
         ];
-        
-        const MATERIAL_COLORS = {
-            'PU': { r: 0.9, g: 0.9, b: 0.95 },
-            'Silicone': { r: 0.8, g: 0.2, b: 0.2 },
-            'Rubber': { r: 0.1, g: 0.1, b: 0.1 },
-            'EPDM': { r: 0.2, g: 0.6, b: 0.2 },
-            'PVC': { r: 0.6, g: 0.6, b: 0.6 }
-        };
         
         // ============= INITIALIZATION =============
         
@@ -1326,37 +1283,6 @@
                 });
         }
         
-        function updateMaterialPreset() {
-            const material = document.getElementById('fvMaterial').value;
-            const colors = MATERIAL_COLORS[material];
-            if (colors) {
-                document.getElementById('colorR').value = colors.r;
-                document.getElementById('colorG').value = colors.g;
-                document.getElementById('colorB').value = colors.b;
-                fvConfig.colorR = colors.r;
-                fvConfig.colorG = colors.g;
-                fvConfig.colorB = colors.b;
-                updateColorPreview();
-            }
-        }
-        
-        function updateColorPreview() {
-            const r = document.getElementById('colorR').value;
-            const g = document.getElementById('colorG').value;
-            const b = document.getElementById('colorB').value;
-            
-            fvConfig.colorR = r;
-            fvConfig.colorG = g;
-            fvConfig.colorB = b;
-            
-            document.getElementById('colorRVal').textContent = r;
-            document.getElementById('colorGVal').textContent = g;
-            document.getElementById('colorBVal').textContent = b;
-            
-            const rgb = `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
-            document.getElementById('colorPreview').style.background = rgb;
-        }
-        
         function validateAndProceedFV(nextStep) {
             fvConfig.tempMin = parseFloat(document.getElementById('tempMin').value);
             fvConfig.tempMax = parseFloat(document.getElementById('tempMax').value);
@@ -1395,7 +1321,6 @@
             document.getElementById('fv_sum_dout').textContent = `${fvConfig.diameterOut} mm`;
             document.getElementById('fv_sum_connectors').textContent = `${fvConfig.connectorEnd1 || 'N/A'} / ${fvConfig.connectorEnd2 || 'N/A'}`;
             document.getElementById('fv_sum_material').textContent = fvConfig.material;
-            document.getElementById('fv_sum_color').textContent = `RGB(${fvConfig.colorR.toFixed(2)}, ${fvConfig.colorG.toFixed(2)}, ${fvConfig.colorB.toFixed(2)})`;
         }
         
         function generateFlexibeleModel() {
@@ -1429,10 +1354,7 @@
                 diameter_outer: fvConfig.diameterOut,
                 connector_end1: fvConfig.connectorEnd1,
                 connector_end2: fvConfig.connectorEnd2,
-                material: fvConfig.material,
-                color_r: fvConfig.colorR,
-                color_g: fvConfig.colorG,
-                color_b: fvConfig.colorB
+                material: fvConfig.material
             };
             
             fetch('/api/generate-flexibele', {
@@ -1470,10 +1392,7 @@
                 diameterOut: 16,
                 connectorEnd1: null,
                 connectorEnd2: null,
-                material: 'PU',
-                colorR: 0.9,
-                colorG: 0.9,
-                colorB: 0.95
+                material: 'PU'
             };
             document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('selected'));
             document.querySelectorAll('.product-type-card').forEach(c => c.classList.remove('selected'));
